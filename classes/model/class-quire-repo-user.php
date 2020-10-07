@@ -74,7 +74,7 @@ class Quire_Repo_User extends Quire_Repo_Abstract {
 		$user = wp_get_current_user();
 		$user = $this->getItem( $user->ID );
 		if ( $full ) {
-			$user->setAgency( $user->get_user_meta( $id, 'agency', true )['ID'] );
+			$user->setAgency( $user->get_user_meta( 'agency', true )['ID'] );
 		}
 
 		return $user;
