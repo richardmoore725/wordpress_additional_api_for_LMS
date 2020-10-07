@@ -30,14 +30,25 @@ class QuireApi {
 
 	private function _init() {
 		$this->includes();
+		$this->init_hooks();
 	}
 
-	public function includes() {
+	private function includes() {
 		//Repository autoloader
 		require_once QUIRE_API_PLUGIN_CLASSES_DIR . '/class-quire-autoloader.php';
 
 		//API creator
 		require_once QUIRE_API_PLUGIN_CLASSES_DIR . '/class-quire-api-loader.php';
+
+
+		require_once QUIRE_API_PLUGIN_CLASSES_DIR . '/includes/functions.php';
+		require_once QUIRE_API_PLUGIN_CLASSES_DIR . '/includes/strings.php';
+
+	}
+
+	private function init_hooks() {
+
+		add_action( 'wp_insert_post', 'quire_post_insert_hook', 1, 3 );
 	}
 
 	public static function getInstance() {

@@ -36,11 +36,11 @@ class Quire_API_Loader {
 
 	protected function getAPIs() {
 		return [
-			'agency'     => 'Quire_API_Agency',
-			'assignment' => 'Quire_API_Assignment',
-			'course'     => 'Quire_API_Course',
-			'group'      => 'Quire_API_Group',
-			'user'       => 'Quire_API_User',
+			'agencies'     => 'Quire_API_Agency',
+			'assignments' => 'Quire_API_Assignment',
+			'courses'     => 'Quire_API_Course',
+			'groups'      => 'Quire_API_Group',
+			'users'       => 'Quire_API_User',
 		];
 	}
 

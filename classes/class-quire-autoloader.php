@@ -5,7 +5,7 @@ class Quire_Autoloader {
 
 	private string $include_path = '';
 
-	private string $class_patterns = '/^(?:quire-)(?P<kind>[^-]+)(-(?P<part>(?!abstract|interface)[^-]*))?(-(?P<type>abstract|interface))?$/';
+	private string $class_patterns = '/^(?:quire-)(?P<kind>[^-]+)(?P<part>(-((?!abstract|interface)[^-]*))*)(-(?P<type>abstract|interface))?$/';
 
 	/**
 	 * QuireApp_Autoloader constructor.
