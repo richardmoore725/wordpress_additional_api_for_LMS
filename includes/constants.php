@@ -9,9 +9,10 @@ define( 'QUIRE_API_PLUGIN_CLASSES_DIR', QUIRE_API_PLUGIN_DIR . '/classes' );
 
 //custom post type
 define( 'AGENCY_CPT', 'agency' );
-define( 'ASSIGNMENT_CPT', 'assignment' );
-define( 'COURSE_CPT', 'course' );
+define( 'ASSIGNMENT_CPT', LP_ORDER_CPT );
+define( 'COURSE_CPT', LP_COURSE_CPT );
 define( 'GROUP_CPT', 'group' );
+define( 'PROGRESS_CPT', 'progress_tracker' );
 
 //user role
 define( 'CAREGIVER_ROLE', 'caregiver' );

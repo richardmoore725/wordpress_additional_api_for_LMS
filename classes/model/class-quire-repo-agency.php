@@ -16,6 +16,12 @@ class Quire_Repo_Agency extends Quire_Repo_Abstract {
 
 	public function getItem( $id, $raw = [] ) {
 		// TODO: Implement getItem() method.
+
+		if (get_post_type( $id )!= $this->getCPT()) {
+			return;
+		}
+		$raw = empty( $raw ) ? get_post( $id ) : $raw;
+
 		$agency = new Quire_Data_Agency( $id, $raw );
 		$agency->setTitle( $agency->getRaw( 'post_title' ) );
 		$agency->setSlug( $agency->getRaw( 'post_name' ) );
@@ -52,7 +58,7 @@ class Quire_Repo_Agency extends Quire_Repo_Abstract {
 		return $agency;
 	}
 
-	public function updateItem( $preparedItem ) {
+	public function updateItem( $id, $preparedItem ) {
 		// TODO: Implement updateItem() method.
 
 	}
@@ -61,7 +67,7 @@ class Quire_Repo_Agency extends Quire_Repo_Abstract {
 		// TODO: Implement createItem() method.
 	}
 
-	public function deleteItem( $preparedItem ) {
+	public function deleteItem( $id ) {
 		// TODO: Implement deleteItem() method.
 	}
 

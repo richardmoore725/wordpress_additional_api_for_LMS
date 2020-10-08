@@ -22,6 +22,11 @@ class Quire_Repo_Assignment extends Quire_Repo_Abstract {
 
 	public function getItem( $id, $raw = [] ) {
 		// TODO: Implement getItem() method.
+		if ( get_post_type( $id ) != $this->getCPT() ) {
+			return;
+		}
+		$raw = empty( $raw ) ? get_post( $id ) : $raw;
+
 		$assignment = new Quire_Data_Assignment( $id, $raw );
 
 		try {
@@ -37,7 +42,9 @@ class Quire_Repo_Assignment extends Quire_Repo_Abstract {
 			);
 
 			$progress = $assignment->get_meta( 'progress', true );
-			$assignment->setProgress( $this->getProgress( $progress['ID'] ) );
+			if ( $progress = $this->getProgress( $progress['ID'] ) ) {
+				$assignment->setProgress( $progress );
+			}
 
 			$users = $order->get_user_id();
 			if ( ! is_array( $users ) ) {
@@ -57,7 +64,12 @@ class Quire_Repo_Assignment extends Quire_Repo_Abstract {
 	}
 
 	public function getProgress( $progress_id ) {
-		$progress = new Quire_Data_Assignment_Progress( $progress_id );
+		if ( get_post_type( $progress_id ) != PROGRESS_CPT ) {
+			return;
+		}
+		$raw = empty( $raw ) ? get_post( $progress_id ) : $raw;
+
+		$progress = new Quire_Data_Assignment_Progress( $progress_id, $raw );
 		$progress->setUser( absint( $progress->getRaw()->post_author ) );
 		$progress->setOrder( absint( $progress->get_meta( 'order', true )['ID'] ) );
 		$progress->setPercent( absint( $progress->get_meta( 'percent', true ) ) );
@@ -70,11 +82,11 @@ class Quire_Repo_Assignment extends Quire_Repo_Abstract {
 		// TODO: Implement createItem() method.
 	}
 
-	public function updateItem( $preparedItem ) {
+	public function updateItem( $id, $preparedItem ) {
 		// TODO: Implement updateItem() method.
 	}
 
-	public function deleteItem( $preparedItem ) {
+	public function deleteItem( $id ) {
 		// TODO: Implement deleteItem() method.
 	}
 
@@ -104,10 +116,15 @@ class Quire_Repo_Assignment extends Quire_Repo_Abstract {
 		$order_agency = $order->get_meta( 'agency', true );
 		$users        = $order->get_users();
 		if ( ! empty( $users ) ) {
-			$user = $this->user_repo->getItem( $users[0] );
+			$agency =  false;
+			foreach ( $users as $user_id ) {
+				$user = $this->user_repo->getItem( $user_id );
+				if ( $user ) {
+					$agency = $user->getAgency();
+				}
+			}
 
-			if ( ! $order_agency ) {
-				$agency = $user->getAgency();
+			if ( ! $order_agency && $agency ) {
 				$order->update_meta( 'agency', $agency->getID() );
 			}
 

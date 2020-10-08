@@ -26,9 +26,9 @@ abstract class Quire_Repo_Abstract {
 
 	abstract public function createItem( $preparedItem );
 
-	abstract public function updateItem( $preparedItem );
+	abstract public function updateItem( $id, $preparedItem );
 
-	abstract public function deleteItem( $preparedItem );
+	abstract public function deleteItem( $id );
 
 
 }

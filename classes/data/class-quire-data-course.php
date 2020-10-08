@@ -16,7 +16,6 @@ class Quire_Data_Course extends Quire_Data_Abstract implements Quire_Data_Course
 	protected $students;
 
 	public function __construct( $ID, $raw = [] ) {
-		$raw = empty( $raw ) ? get_post( $ID ) : $raw;
 		parent::__construct( $ID, $raw );
 	}
 

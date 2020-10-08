@@ -14,7 +14,6 @@ class Quire_Data_Group extends Quire_Data_Abstract implements Quire_Data_Group_I
 	protected $courses;
 
 	public function __construct( $ID, $raw = [] ) {
-		$raw = empty( $raw ) ? get_post( $ID ) : $raw;
 		unset( $raw->guid );
 		parent::__construct( $ID, $raw );
 	}

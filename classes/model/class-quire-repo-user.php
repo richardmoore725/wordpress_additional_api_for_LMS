@@ -33,8 +33,12 @@ class Quire_Repo_User extends Quire_Repo_Abstract {
 
 	public function getItem( $id, $raw = [] ) {
 		// TODO: Implement getItem() method.
-		$user = new Quire_Data_User( $id, $raw );
+		if (!get_userdata( $id )) {
+			return;
+		}
+		$raw = empty( $raw ) ? get_userdata( $id ) : $raw;
 
+		$user = new Quire_Data_User( $id, $raw );
 
 		return $this->_buildItem( $user );
 	}
@@ -78,11 +82,11 @@ class Quire_Repo_User extends Quire_Repo_Abstract {
 		// TODO: Implement createItem() method.
 	}
 
-	public function updateItem( $preparedItem ) {
+	public function updateItem( $id, $preparedItem ) {
 		// TODO: Implement updateItem() method.
 	}
 
-	public function deleteItem( $preparedItem ) {
+	public function deleteItem( $id ) {
 		// TODO: Implement deleteItem() method.
 	}
 

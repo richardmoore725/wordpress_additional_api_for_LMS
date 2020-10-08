@@ -16,6 +16,12 @@ class Quire_Repo_Course extends Quire_Repo_Abstract {
 
 	public function getItem( $id, $raw = [] ) {
 		// TODO: Implement getItem() method.
+
+		if (get_post_type( $id )!= $this->getCPT()) {
+			return;
+		}
+		$raw = empty( $raw ) ? get_post( $id ) : $raw;
+
 		$course    = new Quire_Data_Course( $id, $raw );
 		$lp_course = new LP_Course( $id );
 
@@ -41,11 +47,11 @@ class Quire_Repo_Course extends Quire_Repo_Abstract {
 		// TODO: Implement createItem() method.
 	}
 
-	public function updateItem( $preparedItem ) {
+	public function updateItem( $id, $preparedItem ) {
 		// TODO: Implement updateItem() method.
 	}
 
-	public function deleteItem( $preparedItem ) {
+	public function deleteItem( $id ) {
 		// TODO: Implement deleteItem() method.
 	}
 }

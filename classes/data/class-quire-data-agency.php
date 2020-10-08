@@ -15,7 +15,6 @@ class Quire_Data_Agency extends Quire_Data_Abstract implements Quire_Data_Agency
 	protected $orders;
 
 	public function __construct( $ID, $raw = [] ) {
-		$raw = empty( $raw ) ? get_post( $ID ) : $raw;
 		parent::__construct( $ID, $raw );
 	}
 

@@ -16,6 +16,11 @@ class Quire_Repo_Group extends Quire_Repo_Abstract {
 
 	public function getItem( $id, $raw = [] ) {
 		// TODO: Implement getItem() method.
+		if (get_post_type( $id )!= $this->getCPT()) {
+			return;
+		}
+		$raw = empty( $raw ) ? get_post( $id ) : $raw;
+
 		$group = new Quire_Data_Group( $id, $raw );
 		$group->setSlug( $group->getRaw( 'post_name' ) );
 		$group->setName( $group->getRaw( 'post_title' ) );
@@ -38,11 +43,11 @@ class Quire_Repo_Group extends Quire_Repo_Abstract {
 		// TODO: Implement createItem() method.
 	}
 
-	public function updateItem( $preparedItem ) {
+	public function updateItem( $id, $preparedItem ) {
 		// TODO: Implement updateItem() method.
 	}
 
-	public function deleteItem( $preparedItem ) {
+	public function deleteItem( $id ) {
 		// TODO: Implement deleteItem() method.
 	}
 }
