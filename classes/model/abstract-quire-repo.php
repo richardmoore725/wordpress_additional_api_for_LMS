@@ -5,7 +5,7 @@ abstract class Quire_Repo_Abstract {
 
 	public function getItems( $query_args ) {
 		// TODO: Implement getItems() method.
-		$query_args['post_type']   = $this->getCPT();
+		$query_args['post_type'] = $this->getCPT();
 //		$query_args['post_status'] = 'publish';
 
 		$items = [];

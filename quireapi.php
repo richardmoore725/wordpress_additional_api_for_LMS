@@ -51,7 +51,7 @@ class QuireApi {
 		add_action( 'wp_insert_post', 'quire_post_insert_hook', 1, 3 );
 		add_action( 'set_auth_cookie', 'quire_add_cookie_to_dev_site', 10, 6 );
 		add_action( 'set_logged_in_cookie', 'quire_add_cookie_to_dev_site', 10, 6 );
-		add_filter('jwt_auth_whitelist','/wp-json/quire/*');
+		add_filter( 'jwt_auth_whitelist', '/wp-json/quire/*' );
 	}
 
 	public static function getInstance() {

@@ -1,7 +1,7 @@
 <?php
 
 
-abstract class Quire_Data_Abstract implements JsonSerializable{
+abstract class Quire_Data_Abstract implements JsonSerializable {
 
 	protected $raw;
 
@@ -102,12 +102,12 @@ abstract class Quire_Data_Abstract implements JsonSerializable{
 		return update_post_meta( $this->ID, $key, $value, $u );
 	}
 
-	public function jsonSerialize()
-	{
-		$vars = get_object_vars($this);
-		$vars = array_merge($vars['data'], $vars);
-		unset($vars['data']);
-		unset($vars['raw']);
+	public function jsonSerialize() {
+		$vars = get_object_vars( $this );
+		$vars = array_merge( $vars['data'], $vars );
+		unset( $vars['data'] );
+		unset( $vars['raw'] );
+
 		return $vars;
 	}
 }

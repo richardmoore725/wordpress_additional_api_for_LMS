@@ -35,7 +35,7 @@ class Quire_API_Loader {
 
 	protected function getAPIs() {
 		return [
-			'agencies'     => 'Quire_API_Agency',
+			'agencies'    => 'Quire_API_Agency',
 			'assignments' => 'Quire_API_Assignment',
 			'courses'     => 'Quire_API_Course',
 			'groups'      => 'Quire_API_Group',
