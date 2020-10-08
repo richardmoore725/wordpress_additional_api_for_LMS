@@ -24,7 +24,6 @@ class Quire_API_Loader {
 		$apis = $this->getAPIs();
 		foreach ( $apis as $key => $api ) {
 			if ( is_string( $api ) ) {
-				$key                = $api;
 				$this->apis[ $key ] = new $api( $key );
 			} else {
 				$this->apis[ $key ] = $api;
@@ -41,6 +40,7 @@ class Quire_API_Loader {
 			'courses'     => 'Quire_API_Course',
 			'groups'      => 'Quire_API_Group',
 			'users'       => 'Quire_API_User',
+			'caregivers'  => 'Quire_API_Caregiver',
 		];
 	}
 

@@ -24,11 +24,11 @@ abstract class Quire_Repo_Abstract {
 
 	abstract public function getItem( $id, $raw = [] );
 
-	abstract public function createItem( $obj );
+	abstract public function createItem( $preparedItem );
 
-	abstract public function updateItem( $obj );
+	abstract public function updateItem( $preparedItem );
 
-	abstract public function deleteItem( $obj );
+	abstract public function deleteItem( $preparedItem );
 
 
 }

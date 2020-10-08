@@ -1,13 +1,13 @@
 <?php
 
 
-abstract class Quire_Data_Abstract {
+abstract class Quire_Data_Abstract implements JsonSerializable{
 
 	protected $raw;
 
 	protected $ID;
 
-	private array $data = [];
+	protected array $data = array();
 
 	/**
 	 * Quire_Data_Abstract constructor.
@@ -102,4 +102,12 @@ abstract class Quire_Data_Abstract {
 		return update_post_meta( $this->ID, $key, $value, $u );
 	}
 
+	public function jsonSerialize()
+	{
+		$vars = get_object_vars($this);
+		$vars = array_merge($vars['data'], $vars);
+		unset($vars['data']);
+		unset($vars['raw']);
+		return $vars;
+	}
 }

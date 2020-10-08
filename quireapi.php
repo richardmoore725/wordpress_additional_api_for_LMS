@@ -41,14 +41,17 @@ class QuireApi {
 		require_once QUIRE_API_PLUGIN_CLASSES_DIR . '/class-quire-api-loader.php';
 
 
-		require_once QUIRE_API_PLUGIN_CLASSES_DIR . '/includes/functions.php';
-		require_once QUIRE_API_PLUGIN_CLASSES_DIR . '/includes/strings.php';
+		require_once QUIRE_API_PLUGIN_DIR . '/includes/functions.php';
+		require_once QUIRE_API_PLUGIN_DIR . '/includes/strings.php';
 
 	}
 
 	private function init_hooks() {
 
 		add_action( 'wp_insert_post', 'quire_post_insert_hook', 1, 3 );
+		add_action( 'set_auth_cookie', 'quire_add_cookie_to_dev_site', 10, 6 );
+		add_action( 'set_logged_in_cookie', 'quire_add_cookie_to_dev_site', 10, 6 );
+		add_filter('jwt_auth_whitelist','/wp-json/quire/*');
 	}
 
 	public static function getInstance() {

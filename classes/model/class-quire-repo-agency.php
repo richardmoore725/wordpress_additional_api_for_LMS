@@ -52,15 +52,15 @@ class Quire_Repo_Agency extends Quire_Repo_Abstract {
 		return $agency;
 	}
 
-	public function createItem( $obj ) {
+	public function createItem( $preparedItem ) {
 		// TODO: Implement createItem() method.
 	}
 
-	public function updateItem( $obj ) {
+	public function updateItem( $preparedItem ) {
 		// TODO: Implement updateItem() method.
 	}
 
-	public function deleteItem( $obj ) {
+	public function deleteItem( $preparedItem ) {
 		// TODO: Implement deleteItem() method.
 	}
 

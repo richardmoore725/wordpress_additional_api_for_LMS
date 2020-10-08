@@ -37,15 +37,15 @@ class Quire_Repo_Course extends Quire_Repo_Abstract {
 		return $course;
 	}
 
-	public function createItem( $obj ) {
+	public function createItem( $preparedItem ) {
 		// TODO: Implement createItem() method.
 	}
 
-	public function updateItem( $obj ) {
+	public function updateItem( $preparedItem ) {
 		// TODO: Implement updateItem() method.
 	}
 
-	public function deleteItem( $obj ) {
+	public function deleteItem( $preparedItem ) {
 		// TODO: Implement deleteItem() method.
 	}
 }

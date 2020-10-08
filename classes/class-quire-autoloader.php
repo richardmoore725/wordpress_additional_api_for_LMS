@@ -33,11 +33,7 @@ class Quire_Autoloader {
 	}
 
 	private function get_file( $type, $kind, $part ) {
-		$args = [
-			'{type}' => $type,
-			'{kind}' => $kind,
-			'{part}' => $part
-		];
+
 
 		$path = $this->include_path;
 		if ( $type == 'interface' ) {
@@ -50,9 +46,9 @@ class Quire_Autoloader {
 		}
 
 		if ( $part ) {
-			$file = strtr( '{type}-quire-{kind}-{part}.php', $args );
+			$file = "{$type}-quire-{$kind}{$part}.php";
 		} else {
-			$file = strtr( '{type}-quire-{kind}.php', $args );
+			$file = "{$type}-quire-{$kind}.php";
 		}
 
 		return $path . '/' . $file;

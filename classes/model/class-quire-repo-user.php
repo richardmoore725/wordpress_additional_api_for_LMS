@@ -3,8 +3,8 @@
 
 class Quire_Repo_User extends Quire_Repo_Abstract {
 
-	protected $agency_repo;
-	protected $group_repo;
+	protected Quire_Repo_Agency $agency_repo;
+	protected Quire_Repo_Group $group_repo;
 
 	/**
 	 * Quire_Repo_User constructor.
@@ -31,9 +31,12 @@ class Quire_Repo_User extends Quire_Repo_Abstract {
 		return $items;
 	}
 
-	public function getItem( $id, $raw = [] ) {
-		// TODO: Implement getItem() method.
-		$user = new Quire_Data_User( $id, $raw );
+	protected function _buildItem( $user ) {
+		$id = $user->getID();
+		if ( !isset($id) ) {
+			return;
+		}
+
 		$user->setFirstName( get_user_meta( $id, 'first_name', true ) );
 		$user->setLastName( get_user_meta( $id, 'last_name', true ) );
 		$user->setDisplayName( $user->getRaw( 'display_name' ) );
@@ -58,15 +61,23 @@ class Quire_Repo_User extends Quire_Repo_Abstract {
 		return $user;
 	}
 
-	public function createItem( $obj ) {
+	public function getItem( $id, $raw = [] ) {
+		// TODO: Implement getItem() method.
+		$user = new Quire_Data_User( $id, $raw );
+
+
+		return $this->_buildItem( $user );
+	}
+
+	public function createItem( $preparedItem ) {
 		// TODO: Implement createItem() method.
 	}
 
-	public function updateItem( $obj ) {
+	public function updateItem( $preparedItem ) {
 		// TODO: Implement updateItem() method.
 	}
 
-	public function deleteItem( $obj ) {
+	public function deleteItem( $preparedItem ) {
 		// TODO: Implement deleteItem() method.
 	}
 
