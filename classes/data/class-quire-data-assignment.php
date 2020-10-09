@@ -6,6 +6,7 @@ class Quire_Data_Assignment extends Quire_Data_Abstract implements Quire_Data_As
 	protected $progress;
 	protected $users;
 	protected $courses;
+	protected $groups;
 
 	public function __construct( $ID, $raw = [] ) {
 		parent::__construct( $ID, $raw );
@@ -47,5 +48,18 @@ class Quire_Data_Assignment extends Quire_Data_Abstract implements Quire_Data_As
 		$this->courses = $courses;
 	}
 
+	/**
+	 * @return mixed
+	 */
+	public function getGroups() {
+		return $this->groups;
+	}
+
+	/**
+	 * @param mixed $groups
+	 */
+	public function setGroups( $groups ): void {
+		$this->groups = $groups;
+	}
 
 }

@@ -94,12 +94,33 @@ abstract class Quire_Data_Abstract implements JsonSerializable {
 		return add_post_meta( $this->ID, $key, $value, $u );
 	}
 
-	public function update_meta( string $key, $value, $u = false ) {
+	public function update_meta( string $key, $value, $prev = '' ) {
 		if ( ! $this->ID ) {
 			return false;
 		}
 
-		return update_post_meta( $this->ID, $key, $value, $u );
+		return update_post_meta( $this->ID, $key, $value, $prev );
+	}
+
+	public function update_multi_meta( string $key, $values) {
+		if ( ! $this->ID ) {
+			return false;
+		}
+		/** @var Quire_Data_Caregiver $caregiver */
+		$old_values = $this->get_meta($key);
+
+		$add_values = array_diff($values, $old_values);
+		$del_values = array_diff($old_values, $values);
+
+		foreach ($del_values as $value){
+			delete_post_meta($this->ID, $key, $value);
+		}
+
+		foreach ($add_values as $value){
+			$this->add_meta($key, $value);
+		}
+
+		return true;
 	}
 
 	public function jsonSerialize() {

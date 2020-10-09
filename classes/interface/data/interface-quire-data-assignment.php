@@ -8,4 +8,6 @@ interface Quire_Data_Assignment_Interface extends Quire_Data_Interface {
 	public function getProgress();
 
 	public function getCoures();
+
+	public function getGroups();
 }

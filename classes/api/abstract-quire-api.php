@@ -9,9 +9,8 @@ abstract class Quire_API_Abstract extends WP_REST_Controller {
 	}
 
 	public function register_routes() {
-		$routes = $this->getRoutes();
 
-		$rest_base = $this->rest_base;
+		$routes = $this->getRoutes();
 
 		if ( ! $routes ) {
 			return;
@@ -20,7 +19,9 @@ abstract class Quire_API_Abstract extends WP_REST_Controller {
 		foreach ( $routes as $key => $route ) {
 
 			if ( ! is_numeric( $key ) ) {
-				$rest_base = "{$rest_base}/{$key}";
+				$rest_base = "{$this->rest_base}/{$key}";
+			} else {
+				$rest_base = $this->rest_base;
 			}
 
 			register_rest_route( $this->namespace, '/' . $rest_base, $route );

@@ -71,7 +71,7 @@ class Quire_Repo_Agency extends Quire_Repo_Abstract {
 		// TODO: Implement deleteItem() method.
 	}
 
-	public function getItemByUser( $user ) {
+	public function getItemsByUser( $user ) {
 		if ( $user instanceof WP_User or $user instanceof Quire_Data_User ) {
 			$user = $user->ID;
 		} elseif ( gettype( $user ) !== 'integer' ) {
@@ -89,10 +89,10 @@ class Quire_Repo_Agency extends Quire_Repo_Abstract {
 		];
 		$result     = $this->getItems( $query_args );
 
-		return ! empty( $result ) ?: $result[0];
+		return ! empty( $result ) ? $result: false;
 	}
 
-	public function getItemBy( $admin_id, $caregiver_id ) {
+	public function getItemsBy( $admin_id, $caregiver_id ) {
 		$query_args = [
 			'meta_query' => [
 				'relation'              => 'AND',
@@ -110,6 +110,6 @@ class Quire_Repo_Agency extends Quire_Repo_Abstract {
 		];
 		$result     = $this->getItems( $query_args );
 
-		return ! empty( $result ) ?: $result[0];
+		return ! empty( $result ) ? $result:false;
 	}
 }

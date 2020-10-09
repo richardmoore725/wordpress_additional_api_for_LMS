@@ -5,6 +5,7 @@ class Quire_Repo_Assignment extends Quire_Repo_Abstract {
 
 	protected $course_repo;
 	protected $user_repo;
+	protected $group_repo;
 
 	/**
 	 * Quire_Repo_Assignment constructor.
@@ -12,6 +13,7 @@ class Quire_Repo_Assignment extends Quire_Repo_Abstract {
 	public function __construct() {
 		$this->course_repo = new Quire_Repo_Course();
 		$this->user_repo   = new Quire_Repo_User();
+		$this->group_repo = new Quire_Repo_Group();
 	}
 
 	public function getCPT() {
@@ -58,6 +60,19 @@ class Quire_Repo_Assignment extends Quire_Repo_Abstract {
 					$users
 				)
 			);
+
+			$groups = $assignment->get_meta( 'groups');
+			if ($groups){
+				settype($groups, 'array');
+				$assignment->setGroups(
+					array_map(
+						function ( $group_id ) {
+							return $this->group_repo->getItem( $group_id );
+						},
+						$groups
+					)
+				);
+			}
 		} catch ( Exception $e ) {
 			return;
 		}

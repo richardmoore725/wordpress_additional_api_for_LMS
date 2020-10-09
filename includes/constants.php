@@ -16,3 +16,6 @@ define( 'PROGRESS_CPT', 'progress_tracker' );
 
 //user role
 define( 'CAREGIVER_ROLE', 'caregiver' );
+define( 'AGENCY_ADMIN_ROLE', 'agency_admin' );
+define( 'ADMIN_ROLE', 'administrator' );
+
