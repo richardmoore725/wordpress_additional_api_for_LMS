@@ -73,9 +73,13 @@ class Quire_API_Caregiver extends Quire_API_User {
 			);
 		}
 
-		/** @var Quire_Data_Agency $agency */
-		$agency = $current_user->getAgency();
-		if ( $this->agency_repo->getItemsBy( $current_user->getID(), $caregiver_id ) ) {
+		if ( ! in_array( CAREGIVER_ROLE, $current_user->getRoles() ) ) {
+			$permission = $this->agency_repo->getItemsBy( $current_user->getID(), $caregiver_id );
+		} else {
+			$permission = $caregiver_id == $current_user->getID();
+		}
+
+		if ( ! $permission ) {
 			return new WP_Error(
 				'rest_user_no_permission',
 				__( 'User have not permission to a caregiver!' ),
@@ -115,7 +119,7 @@ class Quire_API_Caregiver extends Quire_API_User {
 			);
 		}
 
-		if ( !in_array( CAREGIVER_ROLE, $current_user->getRoles() ) ) {
+		if ( ! in_array( CAREGIVER_ROLE, $current_user->getRoles() ) ) {
 			return new WP_Error(
 				'rest_user_no_caregiver',
 				__( 'User is not a caregiver!' ),
