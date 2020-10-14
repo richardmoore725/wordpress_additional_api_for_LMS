@@ -14,10 +14,10 @@ class Quire_Repo_Agency extends Quire_Repo_Abstract {
 		return AGENCY_CPT;
 	}
 
-	public function getItem( $id, $raw = [] ) {
+	public function getItem( $id, $full = false, $raw = [] ) {
 		// TODO: Implement getItem() method.
 
-		if (get_post_type( $id )!= $this->getCPT()) {
+		if ( get_post_type( $id ) != $this->getCPT() ) {
 			return;
 		}
 		$raw = empty( $raw ) ? get_post( $id ) : $raw;
@@ -27,33 +27,35 @@ class Quire_Repo_Agency extends Quire_Repo_Abstract {
 		$agency->setSlug( $agency->getRaw( 'post_name' ) );
 
 		$agency->setActive( $agency->get_meta( 'active', true ) );
-		$agency->setSubscription( $agency->get_meta( 'subscription', true ) );
-		$agency->setAdministrators( $agency->get_meta( 'administrators' ) );
-		$agency->setGroups( $agency->get_meta( 'groups' ) );
-		$agency->setCaregivers(
-			array_map(
-				function ( $caregiver ) {
-					return absint( $caregiver['ID'] );
-				},
-				$agency->get_meta( 'caregivers' )
-			)
-		);
-		$agency->setUsers(
-			array_map(
-				function ( $user ) {
-					return absint( $user['ID'] );
-				},
-				$agency->get_meta( 'users' )
-			)
-		);
-		$agency->setOrders(
-			array_map(
-				function ( $order ) {
-					return absint( $order['ID'] );
-				},
-				$agency->get_meta( 'orders' )
-			)
-		);
+		if ( $full ) {
+			$agency->setSubscription( $agency->get_meta( 'subscription', true ) );
+			$agency->setAdministrators( $agency->get_meta( 'administrators' ) );
+			$agency->setGroups( $agency->get_meta( 'groups' ) );
+			$agency->setCaregivers(
+				array_map(
+					function ( $caregiver ) {
+						return absint( $caregiver['ID'] );
+					},
+					$agency->get_meta( 'caregivers' )
+				)
+			);
+			$agency->setUsers(
+				array_map(
+					function ( $user ) {
+						return absint( $user['ID'] );
+					},
+					$agency->get_meta( 'users' )
+				)
+			);
+			$agency->setOrders(
+				array_map(
+					function ( $order ) {
+						return absint( $order['ID'] );
+					},
+					$agency->get_meta( 'orders' )
+				)
+			);
+		}
 
 		return $agency;
 	}
@@ -87,9 +89,9 @@ class Quire_Repo_Agency extends Quire_Repo_Abstract {
 				],
 			],
 		];
-		$result     = $this->getItems( $query_args );
+		$result     = $this->getItems( $query_args, false );
 
-		return ! empty( $result ) ? $result: false;
+		return ! empty( $result ) ? $result : false;
 	}
 
 	public function getItemsBy( $admin_id, $caregiver_id ) {
@@ -108,8 +110,8 @@ class Quire_Repo_Agency extends Quire_Repo_Abstract {
 				],
 			]
 		];
-		$result     = $this->getItems( $query_args );
+		$result     = $this->getItems( $query_args, false );
 
-		return ! empty( $result ) ? $result:false;
+		return ! empty( $result ) ? $result : false;
 	}
 }

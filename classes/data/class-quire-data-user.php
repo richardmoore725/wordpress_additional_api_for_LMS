@@ -44,22 +44,22 @@ class Quire_Data_User extends Quire_Data_Abstract implements Quire_Data_User_Int
 		return update_user_meta( $this->ID, $key, $value, $prev );
 	}
 
-	public function update_multi_meta( string $key, $values) {
+	public function update_multi_meta( string $key, $values ) {
 		if ( ! $this->ID ) {
 			return false;
 		}
 		/** @var Quire_Data_Caregiver $caregiver */
-		$old_values = $this->get_meta($key);
+		$old_values = $this->get_meta( $key );
 
-		$add_values = array_diff($values, $old_values);
-		$del_values = array_diff($old_values, $values);
+		$add_values = array_diff( $values, $old_values );
+		$del_values = array_diff( $old_values, $values );
 
-		foreach ($del_values as $value){
-			delete_user_meta($this->ID, $key, $value);
+		foreach ( $del_values as $value ) {
+			delete_user_meta( $this->ID, $key, $value );
 		}
 
-		foreach ($add_values as $value){
-			$this->add_meta($key, $value);
+		foreach ( $add_values as $value ) {
+			$this->add_meta( $key, $value );
 		}
 
 		return true;

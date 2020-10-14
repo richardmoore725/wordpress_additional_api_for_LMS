@@ -3,15 +3,15 @@
 
 abstract class Quire_Repo_Abstract {
 
-	public function getItems( $query_args ) {
+	public function getItems( $query_args, $full = false ) {
 		// TODO: Implement getItems() method.
-		$query_args['post_type'] = $this->getCPT();
-//		$query_args['post_status'] = 'publish';
+		$query_args['post_type']   = $this->getCPT();
+		$query_args['post_status'] = 'any';
 
 		$items = [];
 		$posts = get_posts( $query_args );
 		foreach ( $posts as $post ) {
-			$items[] = $this->getItem( $post->ID, $post );
+			$items[] = $this->getItem( $post->ID, $full, $post );
 		}
 
 		return $items;
@@ -22,7 +22,7 @@ abstract class Quire_Repo_Abstract {
 	 */
 	abstract public function getCPT();
 
-	abstract public function getItem( $id, $raw = [] );
+	abstract public function getItem( $id, $full = false, $raw = [] );
 
 	abstract public function createItem( $preparedItem );
 

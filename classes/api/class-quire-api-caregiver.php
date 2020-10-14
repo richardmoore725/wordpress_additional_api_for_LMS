@@ -3,13 +3,14 @@
 
 class Quire_API_Caregiver extends Quire_API_User {
 
-	protected Quire_Repo_Caregiver $base_repo;
+	protected Quire_Repo_User $user_repo;
 	protected Quire_Repo_Agency $agency_repo;
 
 	public function __construct( $rest_base = 'caregivers' ) {
 		parent::__construct( $rest_base );
 		$this->base_repo   = new Quire_Repo_Caregiver();
 		$this->agency_repo = new Quire_Repo_Agency();
+		$this->user_repo   = new Quire_Repo_User();
 	}
 
 	protected function getRoutes() {
@@ -36,7 +37,7 @@ class Quire_API_Caregiver extends Quire_API_User {
 					'permission_callback' => array( $this, 'get_item_permissions_check' ),
 				),
 				array(
-					'methods'             => 'PATCH',
+					'methods'             => 'PUT',
 					'callback'            => array( $this, 'update_item' ),
 					'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::EDITABLE ),
@@ -50,7 +51,7 @@ class Quire_API_Caregiver extends Quire_API_User {
 					'permission_callback' => array( $this, 'get_me_permissions_check' ),
 				),
 				array(
-					'methods'             => 'PATCH',
+					'methods'             => 'PUT',
 					'callback'            => array( $this, 'update_me' ),
 					'permission_callback' => array( $this, 'update_me_permissions_check' ),
 					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::EDITABLE ),
@@ -64,7 +65,7 @@ class Quire_API_Caregiver extends Quire_API_User {
 	public function get_item_permissions_check( $request ) {
 		$caregiver_id = $request['id'];
 
-		$current_user = $this->base_repo->getCurrentUser( true );
+		$current_user = $this->user_repo->getCurrentItem();
 		if ( ! $current_user ) {
 			return new WP_Error(
 				'rest_user_no_login',
@@ -73,9 +74,10 @@ class Quire_API_Caregiver extends Quire_API_User {
 			);
 		}
 
-		if ( ! in_array( CAREGIVER_ROLE, $current_user->getRoles() ) ) {
+		$permission = false;
+		if ( $this->user_repo->isRole( AGENCY_ADMIN_ROLE, $current_user ) ) {
 			$permission = $this->agency_repo->getItemsBy( $current_user->getID(), $caregiver_id );
-		} else {
+		} elseif ( $this->user_repo->isRole( CAREGIVER_ROLE, $current_user ) ) {
 			$permission = $caregiver_id == $current_user->getID();
 		}
 
@@ -110,7 +112,7 @@ class Quire_API_Caregiver extends Quire_API_User {
 
 	public function get_me_permissions_check( $request ) {
 
-		$current_user = $this->base_repo->getCurrentUser( true );
+		$current_user = $this->user_repo->getCurrentItem();
 		if ( ! $current_user ) {
 			return new WP_Error(
 				'rest_user_no_login',
@@ -119,7 +121,7 @@ class Quire_API_Caregiver extends Quire_API_User {
 			);
 		}
 
-		if ( ! in_array( CAREGIVER_ROLE, $current_user->getRoles() ) ) {
+		if ( ! $this->user_repo->isRole( CAREGIVER_ROLE, $current_user ) ) {
 			return new WP_Error(
 				'rest_user_no_caregiver',
 				__( 'User is not a caregiver!' ),
@@ -132,7 +134,7 @@ class Quire_API_Caregiver extends Quire_API_User {
 
 	public function get_me( $request ) {
 
-		$current_user = $this->base_repo->getCurrentUser( true );
+		$current_user = $this->user_repo->getCurrentItem();
 		$data         = $this->prepare_item_for_response( $current_user, $request );
 		$response     = rest_ensure_response( $data );
 
@@ -176,7 +178,7 @@ class Quire_API_Caregiver extends Quire_API_User {
 
 	public function update_me( $request ) {
 
-		$current_user = $this->base_repo->getCurrentUser( true );
+		$current_user = $this->user_repo->getCurrentItem();
 		$params       = $request->get_json_params();
 
 		if ( ! $params ) {
@@ -196,34 +198,23 @@ class Quire_API_Caregiver extends Quire_API_User {
 	}
 
 	public function get_items_permissions_check( $request ) {
-		$agency_id = $request['agency'];
-		if ( isset ( $agency_id ) ) {
-			$current_user = $this->base_repo->getCurrentUser( true );
-			if ( ! $current_user ) {
-				return new WP_Error(
-					'rest_user_no_login',
-					__( 'User not logged in.' ),
-					array( 'status' => 404 )
-				);
-			}
+		$current_user = $this->user_repo->getCurrentItem();
+		if ( ! $current_user ) {
+			return new WP_Error(
+				'rest_user_no_login',
+				__( 'User not logged in.' ),
+				array( 'status' => 404 )
+			);
+		}
 
-			/** @var Quire_Data_Agency $agency */
-			$agency = $this->agency_repo->getItem( $agency_id );
-			if ( ! $agency ) {
-				return new WP_Error(
-					'rest_agency_invalid_id',
-					__( 'Invalid agency ID.' ),
-					array( 'status' => 404 )
-				);
-			}
-			$admin_ids = array_column( $agency->getAdministrators(), 'ID' );
-			if ( ! in_array( $current_user->getID(), $admin_ids ) ) {
-				return new WP_Error(
-					'rest_user_no_permission',
-					__( 'User have not permission to a agency!' ),
-					array( 'status' => 404 )
-				);
-			}
+		/** @var Quire_Data_Agency $agency */
+		$agency = $current_user->getAgency();
+		if ( ! $agency ) {
+			return new WP_Error(
+				'rest_user_no_agency',
+				__( 'User does not belong to a agency!' ),
+				array( 'status' => 404 )
+			);
 		}
 
 		return true; // TODO: Change the autogenerated stub
@@ -257,36 +248,18 @@ class Quire_API_Caregiver extends Quire_API_User {
 
 		$prepared_args['role'] = CAREGIVER_ROLE;
 
-		$agency = $request['agency'];
-		if ( ! isset ( $agency ) ) {
-			$current_user = $this->base_repo->getCurrentUser( true );
+		$current_user = $this->user_repo->getCurrentItem( true );
+		$caregivers   = [];
+		if ( $this->user_repo->isRole( CAREGIVER_ROLE, $current_user ) ) {
+			$caregivers[] = $this->base_repo->getItem( $current_user->getID() );
+		} elseif ( $this->user_repo->isRole( AGENCY_ADMIN_ROLE, $current_user ) ) {
 
 			/** @var Quire_Data_Agency $agency */
 			$agency = $current_user->getAgency();
-			if ( ! $agency ) {
-				return new WP_Error(
-					'rest_user_no_agency',
-					__( 'User does not belong to a agency!' ),
-					array( 'status' => 404 )
-				);
-			}
-			$agency = (string) $agency->getID();
-		}
 
-		$prepared_args['meta_query'][] = array(
-			'key'     => 'agency',
-			'value'   => $agency,
-			'compare' => '='
-		);
+			$prepared_args['include'] = $agency->getCaregivers();
 
-		$caregivers = $this->base_repo->getItems( $prepared_args );
-
-		if ( ! $caregivers ) {
-			return new WP_Error(
-				'rest_user_no_agency',
-				__( 'User does not belong to a agency!' ),
-				array( 'status' => 404 )
-			);
+			$caregivers = $this->base_repo->getItems( $prepared_args );
 		}
 
 		$data = array();
@@ -301,10 +274,6 @@ class Quire_API_Caregiver extends Quire_API_User {
 
 	public function get_collection_params() {
 		return array(
-			'agency'  => array(
-				'description' => __( 'agency ID to retrieve caregivers.(default:current user\'s agency)' ),
-				'type'        => 'integer'
-			),
 			'order'   => array(
 				'default'     => 'asc',
 				'description' => __( 'Order sort attribute ascending or descending.' ),

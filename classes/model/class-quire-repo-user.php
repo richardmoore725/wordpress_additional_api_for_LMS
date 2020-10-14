@@ -19,31 +19,34 @@ class Quire_Repo_User extends Quire_Repo_Abstract {
 		return;
 	}
 
-	public function getItems( $query_args ) {
+	public function getItems( $query_args, $full = false ) {
 		// TODO: Implement getItems() method.
 
 		$items = [];
 		$users = get_users( $query_args );
 		foreach ( $users as $user ) {
-			$items[] = $this->getItem( $user->ID, $user );
+			$item = $this->getItem( $user->ID, $full, $user );
+			if ( $item ) {
+				$items[] = $item;
+			}
 		}
 
 		return $items;
 	}
 
-	public function getItem( $id, $raw = [] ) {
+	public function getItem( $id, $full = false, $raw = [] ) {
 		// TODO: Implement getItem() method.
-		if (!get_userdata( $id )) {
+		if ( ! get_userdata( $id ) ) {
 			return;
 		}
 		$raw = empty( $raw ) ? get_userdata( $id ) : $raw;
 
 		$user = new Quire_Data_User( $id, $raw );
 
-		return $this->_buildItem( $user );
+		return $this->_buildItem( $user, $full );
 	}
 
-	protected function _buildItem( $user ) {
+	protected function _buildItem( $user, $full ) {
 		/** @var Quire_Data_User $user */
 		$id = $user->getID();
 		if ( ! isset( $id ) ) {
@@ -60,9 +63,6 @@ class Quire_Repo_User extends Quire_Repo_Abstract {
 		$user->setRoles( $user->getRaw( 'roles' ) );
 
 		try {
-			$agency = $user->get_meta( 'agency', true );
-			$user->setAgency( $this->agency_repo->getItem( $agency['ID'] ) );
-
 			$groups = $user->get_meta( 'groups' );
 			$user->setGroups(
 				array_map(
@@ -72,6 +72,15 @@ class Quire_Repo_User extends Quire_Repo_Abstract {
 					$groups
 				)
 			);
+
+			$agency = $user->get_meta( 'agency', true );
+//			$user->setAgency( $this->agency_repo->getItem( $agency['ID'], $full ) );
+			if ($full){
+				$user->setAgency( $this->agency_repo->getItem( $agency['ID'], $full ) );
+			}else{
+				$user->setAgency( $agency['ID']);
+			}
+
 		} catch ( Exception $e ) {
 		}
 
@@ -90,13 +99,18 @@ class Quire_Repo_User extends Quire_Repo_Abstract {
 		// TODO: Implement deleteItem() method.
 	}
 
-	public function getCurrentUser( bool $full = false ) {
+	public function getCurrentItem( bool $full = false ) {
 		$user = wp_get_current_user();
-		$user = $this->getItem( $user->ID );
-		if ( ! $full ) {
-			$user->setAgency( $user->get_user_meta( 'agency', true )['ID'] );
-		}
+		$user = $this->getItem( $user->ID, $full );
 
 		return $user;
+	}
+
+	public function isRole( $role, $item ) {
+		if ( $item instanceof Quire_Data_User ) {
+			return in_array( $role, $item->getRoles() );
+		}
+
+		return false;
 	}
 }

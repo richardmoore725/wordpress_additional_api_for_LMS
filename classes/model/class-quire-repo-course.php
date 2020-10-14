@@ -14,10 +14,10 @@ class Quire_Repo_Course extends Quire_Repo_Abstract {
 		return COURSE_CPT;
 	}
 
-	public function getItem( $id, $raw = [] ) {
+	public function getItem( $id, $full = false, $raw = [] ) {
 		// TODO: Implement getItem() method.
 
-		if (get_post_type( $id )!= $this->getCPT()) {
+		if ( get_post_type( $id ) != $this->getCPT() ) {
 			return;
 		}
 		$raw = empty( $raw ) ? get_post( $id ) : $raw;
@@ -27,18 +27,22 @@ class Quire_Repo_Course extends Quire_Repo_Abstract {
 
 		$course->setTitle( $course->getRaw( 'post_title' ) );
 		$course->setSlug( $course->getRaw( 'post_name' ) );
-		$course->setContent( $course->getRaw( 'post_content' ) );
 		$course->setExcerpt( $course->getRaw( 'post_excerpt' ) );
 
 		$featured_img = wp_get_attachment_url( get_post_thumbnail_id( $id ) );
 		$course->setFeaturedImage( $featured_img );
 
-		$course->setSections( $lp_course->get_curriculum_raw() );
 		$course->setDuration( $course->get_meta( '_lp_duration', true ) );
 		$course->setItemCount( $course->get_meta( 'count_items', true ) );
 		$course->setEnrollRequired( $course->get_meta( '_lp_required_enroll', true ) );
 		$course->setPassingCondition( $course->get_meta( '_lp_passing_condition', true ) );
 		$course->setStudents( $course->get_meta( '_lp_students', true ) );
+
+		if ( $full ) {
+			$course->setContent( $course->getRaw( 'post_content' ) );
+			$course->setSections( $lp_course->get_curriculum_raw() );
+		} else {
+		}
 
 		return $course;
 	}

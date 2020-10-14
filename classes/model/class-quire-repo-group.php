@@ -14,9 +14,9 @@ class Quire_Repo_Group extends Quire_Repo_Abstract {
 		return GROUP_CPT;
 	}
 
-	public function getItem( $id, $raw = [] ) {
+	public function getItem( $id, $full = false, $raw = [] ) {
 		// TODO: Implement getItem() method.
-		if (get_post_type( $id )!= $this->getCPT()) {
+		if ( get_post_type( $id ) != $this->getCPT() ) {
 			return;
 		}
 		$raw = empty( $raw ) ? get_post( $id ) : $raw;
@@ -32,11 +32,32 @@ class Quire_Repo_Group extends Quire_Repo_Abstract {
 			$featured_img = 'http://api.quireapp.local/wp-content/uploads/2020/08/employee.png';
 		}
 		$group->setFeaturedImage( $featured_img );
-		$group->setGroupType( wp_get_post_terms( $id, 'group_type', [ 'fields' => 'slugs' ] ) );
-		$group->setUsers( $group->get_meta( 'users' ) );
+		$group->setGroupType( $this->getGroupType( $id ) );
 		$group->setCourses( $group->get_meta( 'courses' ) );
 
+		if ( $full ) {
+			$group->setUsers( $group->get_meta( 'users' ) );
+		}
+
 		return $group;
+	}
+
+	public function getGroupType( $id ) {
+		$types = wp_get_post_terms( $id, 'group_type', [ 'fields' => 'slugs' ] );
+
+		return $types[0];
+	}
+
+	public function getItemsByType( $type, $query_args, $full ) {
+		$query_args['tax_query'] = array(
+			array(
+				'taxonomy' => 'group_type',
+				'field'    => 'slug',
+				'terms'    => $type,
+			)
+		);
+
+		return $this->getItems( $query_args, $full );
 	}
 
 	public function createItem( $preparedItem ) {

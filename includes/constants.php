@@ -19,3 +19,13 @@ define( 'CAREGIVER_ROLE', 'caregiver' );
 define( 'AGENCY_ADMIN_ROLE', 'agency_admin' );
 define( 'ADMIN_ROLE', 'administrator' );
 
+//assignment status
+define( 'ASSIGNMENT_STATUS_ACTIVE', 'active' );
+define( 'ASSIGNMENT_STATUS_COMPLETED', 'completed' );
+
+//group type
+define( 'GROUP_COURSE', 'course' );
+define( 'GROUP_CAREGIVER', 'caregiver' );
+
+//course status
+define( 'COURSE_STATUS_PUBLISH', 'publish' );
