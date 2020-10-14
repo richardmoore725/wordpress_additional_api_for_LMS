@@ -44,15 +44,15 @@ class Quire_API_User extends Quire_API_Abstract implements Quire_API_User_Interf
 
 	public function get_items( $request ) {
 		$users        = array();
-		$current_user = $this->user_repo->getCurrentItem( true );
-		if ( $this->user_repo->isRole( AGENCY_ADMIN_ROLE, $current_user ) ) {
+		$current_user = $this->base_repo->getCurrentItem( true );
+		if ( $this->base_repo->isRole( AGENCY_ADMIN_ROLE, $current_user ) ) {
 			/** @var Quire_Data_Agency $agency */
 			$agency = $current_user->getAgency();
-			$users  = array_map( function ( $user ) {
-				return $user['ID'];
+			$users  = array_map( function ( $user_id ) {
+				return $user_id;
 			}, $agency->getUsers() );
 			$users  = $this->base_repo->getItems( array( 'include' => $users ), true );
-		} elseif ( $this->user_repo->isRole( ADMIN_ROLE, $current_user ) ) {
+		} elseif ( $this->base_repo->isRole( ADMIN_ROLE, $current_user ) ) {
 			$users = $this->base_repo->getItems( array(), true );
 		}
 
@@ -67,7 +67,7 @@ class Quire_API_User extends Quire_API_Abstract implements Quire_API_User_Interf
 	}
 
 	public function get_item_permissions_check( $request ) {
-		$current_user = $this->user_repo->getCurrentItem();
+		$current_user = $this->base_repo->getCurrentItem();
 		if ( ! $current_user ) {
 			return new WP_Error(
 				'rest_user_no_login',
@@ -76,41 +76,43 @@ class Quire_API_User extends Quire_API_Abstract implements Quire_API_User_Interf
 			);
 		}
 
-		if ( ! $this->user_repo->isRole( ADMIN_ROLE, $current_user )
-		     && ! $this->user_repo->isRole( AGENCY_ADMIN_ROLE, $current_user ) ) {
+		if ( ! $this->base_repo->isRole( ADMIN_ROLE, $current_user )
+		     && ! $this->base_repo->isRole( AGENCY_ADMIN_ROLE, $current_user ) ) {
 			return new WP_Error(
 				'rest_user_no_permission',
-				__( 'User have not permission to a group!' ),
+				__( 'User have not permission to a user!' ),
 				array( 'status' => 404 )
 			);
 		}
+
+		return true;
 	}
 
 	public function get_item( $request ) {
-		$current_user = $this->user_repo->getCurrentItem( true );
+		$current_user = $this->base_repo->getCurrentItem( true );
 
 		$user = false;
-		if ( $this->user_repo->isRole( AGENCY_ADMIN_ROLE, $current_user ) ) {
+		if ( $this->base_repo->isRole( AGENCY_ADMIN_ROLE, $current_user ) ) {
 			$agency = $current_user->getAgency();
-			$users  = array_map( function ( $user ) {
-				return $user['ID'];
+			$users  = array_map( function ( $user_id ) {
+				return $user_id;
 			}, $agency->getUsers() );
 			if (in_array($request['id'], $users)){
-				$user = $this->base_repo->getItems( $request['id'], true );
+				$user = $this->base_repo->getItem( $request['id'], true );
 			}
-		} elseif ( $this->user_repo->isRole( ADMIN_ROLE, $current_user ) ) {
-			$user = $this->base_repo->getItems( $request['id'], true );
+		} elseif ( $this->base_repo->isRole( ADMIN_ROLE, $current_user ) ) {
+			$user = $this->base_repo->getItem( $request['id'], true );
 		}
 
 		if ( ! $user ) {
 			return new WP_Error(
 				'rest_user_invalid_id',
-				__( 'Invalid agency ID.' ),
+				__( 'Invalid user ID.' ),
 				array( 'status' => 404 )
 			);
 		}
 
-		$data     = $this->prepare_item_for_response( $agency, $request );
+		$data     = $this->prepare_item_for_response( $user, $request );
 		$response = rest_ensure_response( $data );
 
 		return $response;

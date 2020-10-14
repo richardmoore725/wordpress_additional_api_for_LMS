@@ -74,11 +74,13 @@ class Quire_Repo_User extends Quire_Repo_Abstract {
 			);
 
 			$agency = $user->get_meta( 'agency', true );
+			if($agency){
 //			$user->setAgency( $this->agency_repo->getItem( $agency['ID'], $full ) );
-			if ($full){
-				$user->setAgency( $this->agency_repo->getItem( $agency['ID'], $full ) );
-			}else{
-				$user->setAgency( $agency['ID']);
+				if ($full){
+					$user->setAgency( $this->agency_repo->getItem( $agency['ID'], $full ) );
+				}else{
+					$user->setAgency( $agency['ID']);
+				}
 			}
 
 		} catch ( Exception $e ) {

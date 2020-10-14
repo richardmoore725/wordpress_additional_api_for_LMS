@@ -49,7 +49,7 @@ class Quire_API_Agency extends Quire_API_Abstract implements Quire_API_Agency_In
 		$current_user = $this->user_repo->getCurrentItem( true );
 		if ( $this->user_repo->isRole( AGENCY_ADMIN_ROLE, $current_user ) ) {
 			$agency = $current_user->getAgency();
-			if ( $agency->getID() == $request['id'] ) {
+			if ( $agency) {
 				$agencies[] = $agency;
 			}
 		} elseif ( $this->user_repo->isRole( ADMIN_ROLE, $current_user ) ) {
@@ -80,10 +80,11 @@ class Quire_API_Agency extends Quire_API_Abstract implements Quire_API_Agency_In
 		     && ! $this->user_repo->isRole( AGENCY_ADMIN_ROLE, $current_user ) ) {
 			return new WP_Error(
 				'rest_user_no_permission',
-				__( 'User have not permission to a group!' ),
+				__( 'User have not permission to a agency!' ),
 				array( 'status' => 404 )
 			);
 		}
+		return true;
 	}
 
 	public function get_item( $request ) {
@@ -96,7 +97,7 @@ class Quire_API_Agency extends Quire_API_Abstract implements Quire_API_Agency_In
 				$agency = false;
 			}
 		} elseif ( $this->user_repo->isRole( ADMIN_ROLE, $current_user ) ) {
-			$agency = $this->base_repo->getItems( $request['id'], true );
+			$agency = $this->base_repo->getItem( $request['id'], true );
 		}
 
 		if ( ! $agency ) {
